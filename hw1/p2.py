@@ -93,16 +93,15 @@ def multibit_adder(A, B, carrybit=False):
         list, with the least significant digit be the first.
 
     """
-        n = len(A)
+    n = len(A)
 
-    # 1) bitwise NOT using NAND-derived NOT()
+    # 1) Bitwise NOT using the NAND-derived NOT()
     inv = [NOT(bit) for bit in A]
 
-    # 2) add 1 using the NAND-based multibit_adder
-    plus_one = [1] + [0]*(n-1)          # [1,0,0,...] same length as A
-    negA = multibit_adder(inv, plus_one, carrybit=False)
+    # 2) Add 1 using the provided NAND-based multibit_adder
+    plus_one = [1] + [0] * (n - 1)          # [1,0,0,...] length n
+    negA = multibit_adder(inv, plus_one, carrybit=False)  # keep width n
 
-    # Fixed width: multibit_adder already returns n bits when carrybit=False
     return negA
 
 
@@ -124,8 +123,8 @@ def multibit_subtractor(A, B):
 
     """    # Pad to same length because multibit_adder asserts equal lengths
     n = max(len(A), len(B))
-    Ap = A + [0]*(n - len(A))
-    Bp = B + [0]*(n - len(B))
+    Ap = A + [0] * (n - len(A))
+    Bp = B + [0] * (n - len(B))
 
     negB = multibit_negative(Bp)
     return multibit_adder(Ap, negB, carrybit=False)
