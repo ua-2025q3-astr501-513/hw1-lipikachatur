@@ -67,7 +67,13 @@ def multibit_adder(A, B, carrybit=False):
 # auto-tester would fail, and you will not obtain point for this
 # assigment.
 
-def multibit_negative(A):
+
+# We are now ready to implement subtraction using multibit_adder() and
+# multibit_negative().
+
+
+
+   def multibit_negative(A):
     """Multi-bit integer negative operator
 
     This function take the binary number A and return negative A using
@@ -87,23 +93,18 @@ def multibit_negative(A):
         list, with the least significant digit be the first.
 
     """
-    
-    #we bascially need to return the complement or inverse of every binary term. so somehow get A in binary, and then flip each term from 0 to 1 and 1 to 0
-    inverted  = [1- bit for bit in A]
+        n = len(A)
 
-    result = []
-    carry = 1
-    for bit in inverted:
-        total = bit + carry
-        result.append(total%2)
-        carry = total //2
-    if carry:
-        result.append(carry)
+    # 1) bitwise NOT using NAND-derived NOT()
+    inv = [NOT(bit) for bit in A]
 
-    return result
+    # 2) add 1 using the NAND-based multibit_adder
+    plus_one = [1] + [0]*(n-1)          # [1,0,0,...] same length as A
+    negA = multibit_adder(inv, plus_one, carrybit=False)
 
-# We are now ready to implement subtraction using multibit_adder() and
-# multibit_negative().
+    # Fixed width: multibit_adder already returns n bits when carrybit=False
+    return negA
+
 
 def multibit_subtractor(A, B):
     """Multi-bit integer subtraction operator
@@ -121,17 +122,10 @@ def multibit_subtractor(A, B):
         A - B represented as a python list, with the least significant
         digit be the first.
 
-    """
-    result = []
-    carry = 0
+    """    # Pad to same length because multibit_adder asserts equal lengths
     n = max(len(A), len(B))
-    for i in range(n):
-        a_bit = A[i] if i < len(A) else 0
-        b_bit = B[i] if i < len(B) else 0
-        total = a_bit + b_bit + carry
-        result.append(total % 2)
-        carry = total // 2
-    if carry:
-        result.append(carry)
-    return result
-   
+    Ap = A + [0]*(n - len(A))
+    Bp = B + [0]*(n - len(B))
+
+    negB = multibit_negative(Bp)
+    return multibit_adder(Ap, negB, carrybit=False)
