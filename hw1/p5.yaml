@@ -38,10 +38,21 @@
 
 # TODO: Edit this sample idea.
 
-- topic: Numerical Linear Algebra
-  idea:  Develop a fast matrix multiplication algorithm to reduce
-         energy consumption during deep learning inference.
+- topic: Fourier Transform and Spectral Analysis
+  idea: Apply Fourier-based spectral analysis to mock Aspera CGM data
+        in order to detect faint absorption features from ionized gas
+        and improve signal extraction from noisy backgrounds.
 
+- topic: Numerical Integration of Functions
+  idea: Use numerical integration methods to calculate the total gas
+        mass in the circumgalactic medium by integrating simulated
+        density and temperature profiles from cosmological models.
+
+- topic: ODE Integrators
+  idea: Simulate galaxy evolution by integrating coupled ODEs that
+        track gas inflows, star formation, and feedback, and compare
+        stability of different integrators on long-term galaxy growth.
+        
 # TODO: Add two more project ideas below, following the same format as
 # the example above.
 # Remember to ensure that each idea is distinct and concise, and each
