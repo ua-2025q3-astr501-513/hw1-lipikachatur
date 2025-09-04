@@ -87,7 +87,20 @@ def multibit_negative(A):
         list, with the least significant digit be the first.
 
     """
-    # TODO: implement the function here
+    
+    #we bascially need to return the complement or inverse of every binary term. so somehow get A in binary, and then flip each term from 0 to 1 and 1 to 0
+    inverted  = [1- bit for bit in A]
+
+    result = []
+    carry = 1
+    for bit in inverted:
+        total = bit + carry
+        result.append(total%2)
+        carry = total //2
+    if carry:
+        result.append(carry)
+
+    return result
 
 # We are now ready to implement subtraction using multibit_adder() and
 # multibit_negative().
@@ -109,4 +122,16 @@ def multibit_subtractor(A, B):
         digit be the first.
 
     """
-    # TODO: implement the function here
+    result = []
+    carry = 0
+    n = max(len(A), len(B))
+    for i in range(n):
+        a_bit = A[i] if i < len(A) else 0
+        b_bit = B[i] if i < len(B) else 0
+        total = a_bit + b_bit + carry
+        result.append(total % 2)
+        carry = total // 2
+    if carry:
+        result.append(carry)
+    return result
+   
