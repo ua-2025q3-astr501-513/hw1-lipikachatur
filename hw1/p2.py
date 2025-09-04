@@ -72,8 +72,7 @@ def multibit_adder(A, B, carrybit=False):
 # multibit_negative().
 
 
-
-   def multibit_negative(A):
+def multibit_negative(A):
     """Multi-bit integer negative operator
 
     This function take the binary number A and return negative A using
@@ -106,7 +105,8 @@ def multibit_adder(A, B, carrybit=False):
 
 
 def multibit_subtractor(A, B):
-    """Multi-bit integer subtraction operator
+    """
+    Multi-bit integer subtraction operator
 
     This function take the binary numbers A and B, and return A - B.
     Be careful on how the carrying bit is handled in multibit_adder().
@@ -121,7 +121,7 @@ def multibit_subtractor(A, B):
         A - B represented as a python list, with the least significant
         digit be the first.
 
-    """    # Pad to same length because multibit_adder asserts equal lengths
+    """    
     n = max(len(A), len(B))
     Ap = A + [0] * (n - len(A))
     Bp = B + [0] * (n - len(B))
