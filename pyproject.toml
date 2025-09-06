@@ -18,9 +18,10 @@
 name = "hw1"
 version = "0.1.0"
 license = { file = "LICENSE" }
-dependencies = ["pytest"]
+dependencies = ["pytest", "numpy>=1.22"]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
 
