@@ -64,32 +64,40 @@ def quadratic(a, b, c):
                 If there is only one real root, x2 == None.
                 If there is no real root, x1 == x2 == None.
     """
-     if a == 0.0:
+
+    # Degenerate / linear cases
+    if a == 0.0:
         if b == 0.0:
             return (None, None)
         return (-c / b, None)
 
+    # Discriminant
     d = b*b - 4.0*a*c
     if d < 0.0:
-        return (None, None) 
+        return (None, None)
+    if d == 0.0:
+        # Double root: avoid any cancellation fuss
+        return (-b / (2.0*a), None)
 
     sqrt_d = math.sqrt(d)
 
-    sgn_b = 1.0 if b >= 0.0 else -1.0
-    q = -0.5 * (b + sgn_b * sqrt_d)
+    # Use the conjugate form from your docstring
+    # x1 = (-b - sign(b)*sqrt_d) / (2a)
+    sign_b = 1.0 if b >= 0.0 else -1.0
+    x1 = (-b - sign_b*sqrt_d) / (2.0*a)
 
-    x1 = q / a
-    if q != 0.0:
-        x2 = c / q
+    # x2 = (c/a) / x1   (product of roots = c/a)
+    # x1 cannot be zero here unless (a,b,c) is degenerate,
+    # but guard anyway with the complementary expression.
+    if x1 != 0.0:
+        x2 = (c / a) / x1
     else:
-       
-        x2 = -b / a
+        x2 = (-b + sign_b*sqrt_d) / (2.0*a)
 
-
+    # Order roots
     if x2 < x1:
         x1, x2 = x2, x1
 
-    if math.isclose(x1, x2, rel_tol=1e-15, abs_tol=0.0):
-        return (x1, None)
-
     return (x1, x2)
+
+       
