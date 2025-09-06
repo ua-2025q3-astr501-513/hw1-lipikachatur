@@ -51,26 +51,31 @@ class CoupledOscillators:
         # Compute initial modal amplitudes M0 (normal mode decomposition)
         self.m = float(m)
         self.k = float(k)
+
+        # Make X0 a 1D float array; length N defines the system size.
         self.X0 = np.asarray(X0, dtype=float).reshape(-1)
-        if self.X0.shape[0] != 3:
-            raise ValueError("X0 must be length 3 for this 3-mass system.")
+        N = self.X0.size
+        if N < 2:
+            raise ValueError("Need at least 2 oscillators.")
 
-        # Stiffness matrix for fixed ends (wall–mass–mass–mass–wall)
-        K = self.k * np.array([[ 2.0, -1.0,  0.0],
-                               [-1.0,  2.0, -1.0],
-                               [ 0.0, -1.0,  2.0]], dtype=float)
+        # Build stiffness matrix K for fixed ends (wall–masses–wall)
+        # K = k * ( 2*I - offdiag(+1) - offdiag(-1) )
+        main = 2.0 * np.ones(N)
+        off  = -1.0 * np.ones(N - 1)
+        K = self.k * (np.diag(main) + np.diag(off, 1) + np.diag(off, -1))
 
-        # Solve eigenproblem for A = K/m (symmetric -> use eigh)
+        # Solve eigenproblem for A = K/m (symmetric)
         A = K / self.m
-        evals, evecs = np.linalg.eigh(A)  # evals ascending, evecs columns
+        evals, evecs = np.linalg.eigh(A)   # columns of evecs are modes
 
         # Angular frequencies and mode shapes
-        self.Omega = np.sqrt(np.clip(evals, 0.0, None))  # guard tiny negatives
-        self.V = evecs                                  # columns are modes
+        self.Omega = np.sqrt(np.clip(evals, 0.0, None))
+        self.V = evecs
 
-        # Initial modal amplitudes (zero initial velocities assumed)
-        # Since V is orthonormal for identical masses, projection is V^T X0
+        # Initial modal amplitudes (zero initial velocities)
+        # Orthonormal V (since masses identical) => project with V^T
         self.M0 = self.V.T @ self.X0
+
     
     def __call__(self, t):
         """Calculate the displacements of the oscillators at time t.
@@ -84,11 +89,8 @@ class CoupledOscillators:
         """
         # : Reconstruct the displacements from normal modes
         t = float(t)
-        # modal coordinates: q_i(t) = M0_i * cos(Omega_i * t)
-        q_t = self.M0 * np.cos(self.Omega * t)
-        # reconstruct physical displacements
-        X_t = self.V @ q_t
-        return X_t
+        q_t = self.M0 * np.cos(self.Omega * t)  # modal coordinates
+        return self.V @ q_t
 
 if __name__ == "__main__":
 
