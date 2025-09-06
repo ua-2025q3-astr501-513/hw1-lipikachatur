@@ -45,11 +45,33 @@ class CoupledOscillators:
             k  (float):              spring constant (assumed identical for all springs).
 
         """
-        # TODO: Construct the stiffness matrix K
-        # TODO: Solve the eigenvalue problem for K to find normal modes
-        # TODO: Store angular frequencies and eigenvectors
-        # TODO: Compute initial modal amplitudes M0 (normal mode decomposition)
+        # Construct the stiffness matrix K
+        # Solve the eigenvalue problem for K to find normal modes
+        # Store angular frequencies and eigenvectors
+        # Compute initial modal amplitudes M0 (normal mode decomposition)
+        self.m = float(m)
+        self.k = float(k)
+        self.X0 = np.asarray(X0, dtype=float).reshape(-1)
+        if self.X0.shape[0] != 3:
+            raise ValueError("X0 must be length 3 for this 3-mass system.")
 
+        # Stiffness matrix for fixed ends (wall–mass–mass–mass–wall)
+        K = self.k * np.array([[ 2.0, -1.0,  0.0],
+                               [-1.0,  2.0, -1.0],
+                               [ 0.0, -1.0,  2.0]], dtype=float)
+
+        # Solve eigenproblem for A = K/m (symmetric -> use eigh)
+        A = K / self.m
+        evals, evecs = np.linalg.eigh(A)  # evals ascending, evecs columns
+
+        # Angular frequencies and mode shapes
+        self.Omega = np.sqrt(np.clip(evals, 0.0, None))  # guard tiny negatives
+        self.V = evecs                                  # columns are modes
+
+        # Initial modal amplitudes (zero initial velocities assumed)
+        # Since V is orthonormal for identical masses, projection is V^T X0
+        self.M0 = self.V.T @ self.X0
+    
     def __call__(self, t):
         """Calculate the displacements of the oscillators at time t.
 
@@ -60,8 +82,13 @@ class CoupledOscillators:
             np.ndarray: displacements of the oscillators at time t.
 
         """
-        # TODO: Reconstruct the displacements from normal modes
-
+        # : Reconstruct the displacements from normal modes
+        t = float(t)
+        # modal coordinates: q_i(t) = M0_i * cos(Omega_i * t)
+        q_t = self.M0 * np.cos(self.Omega * t)
+        # reconstruct physical displacements
+        X_t = self.V @ q_t
+        return X_t
 
 if __name__ == "__main__":
 
