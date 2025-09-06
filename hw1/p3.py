@@ -65,7 +65,6 @@ def quadratic(a, b, c):
                 If there is no real root, x1 == x2 == None.
     """
 
-    # Degenerate / linear cases
     if a == 0.0:
         if b == 0.0:
             return (None, None)
@@ -75,29 +74,29 @@ def quadratic(a, b, c):
     d = b*b - 4.0*a*c
     if d < 0.0:
         return (None, None)
+
     if d == 0.0:
-        # Double root: avoid any cancellation fuss
+        # Perfect double root
         return (-b / (2.0*a), None)
 
-    sqrt_d = math.sqrt(d)
-
-    # Use the conjugate form from your docstring
-    # x1 = (-b - sign(b)*sqrt_d) / (2a)
+    # Stable computation using q
+    sqrt_d = d ** 0.5
     sign_b = 1.0 if b >= 0.0 else -1.0
-    x1 = (-b - sign_b*sqrt_d) / (2.0*a)
+    q = -0.5 * (b + sign_b * sqrt_d)
 
-    # x2 = (c/a) / x1   (product of roots = c/a)
-    # x1 cannot be zero here unless (a,b,c) is degenerate,
-    # but guard anyway with the complementary expression.
-    if x1 != 0.0:
-        x2 = (c / a) / x1
+    # First root is stable
+    x1 = q / a
+
+    # Second root via product of roots c/a; handle q == 0 safely
+    if q != 0.0:
+        x2 = c / q
     else:
-        x2 = (-b + sign_b*sqrt_d) / (2.0*a)
+        # q==0 happens only in the fully degenerate case (b==sqrt_d==0, i.e., c==0)
+        # Equation reduces to a x^2 = 0 -> root at 0 (double)
+        return (0.0, None)
 
-    # Order roots
+    # Order
     if x2 < x1:
         x1, x2 = x2, x1
 
     return (x1, x2)
-
-       

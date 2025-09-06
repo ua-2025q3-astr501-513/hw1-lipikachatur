@@ -16,7 +16,8 @@
 
 [project]
 name = "hw1"
-version = "1.0"
-dependencies = [
-    "pytest"
-]
+version = "1.0.0"
+requires-python = ">=3.8"
+readme = "README.md"
+license = { file = "LICENSE" }
+dependencies = ["pytest"]
