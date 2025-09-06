@@ -64,4 +64,32 @@ def quadratic(a, b, c):
                 If there is only one real root, x2 == None.
                 If there is no real root, x1 == x2 == None.
     """
-    # TODO: implement the stable quadratic equation solver here
+     if a == 0.0:
+        if b == 0.0:
+            return (None, None)
+        return (-c / b, None)
+
+    d = b*b - 4.0*a*c
+    if d < 0.0:
+        return (None, None) 
+
+    sqrt_d = math.sqrt(d)
+
+    sgn_b = 1.0 if b >= 0.0 else -1.0
+    q = -0.5 * (b + sgn_b * sqrt_d)
+
+    x1 = q / a
+    if q != 0.0:
+        x2 = c / q
+    else:
+       
+        x2 = -b / a
+
+
+    if x2 < x1:
+        x1, x2 = x2, x1
+
+    if math.isclose(x1, x2, rel_tol=1e-15, abs_tol=0.0):
+        return (x1, None)
+
+    return (x1, x2)
